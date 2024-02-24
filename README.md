@@ -1,11 +1,2 @@
-To install dependencies:
-```sh
-bun install
-```
-
-To run:
-```sh
-bun run dev
-```
-
-open http://localhost:3000
+OchをHonoXからHonoに作り替えて色々な場所で動くようにする試み
+node互換のBanで動かす
