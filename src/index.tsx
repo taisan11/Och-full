@@ -55,11 +55,22 @@ app.get('/', (c) => {
 app.get('/test/read.cgi/', (c) => {
   return c.render(
     <>
-    <h2>test</h2>
+    <h2>test2</h2>
     <p>test</p>
     </>,{ title: 'test' }
   )
 })
 
+// READ.CGI //
+app.get('/test/read.cgi/:board/:id', (c) => {
+  const { board, id } = c.req.param()
+  Bun.file(`./${board}/dat/${id}.dat`)
+  return c.render(
+    <>
+    <h2>{board}</h2>
+    <p>{id}</p>
+    </>,{ title: 'test' }
+  )
+})
 
 export default app
