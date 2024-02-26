@@ -6,4 +6,4 @@ const testSUBJECT = `
 `
 
 const storage = createStorage(fsDriver({ base: './data' }))
-storage.setItem('/test/SUBJECT', testSUBJECT)
+storage.setItem('/test/SUBJECT.TXT', testSUBJECT)
