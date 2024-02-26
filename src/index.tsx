@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { jsxRenderer, useRequestContext } from 'hono/jsx-renderer'
 import { createStorage } from "unstorage";
-import READ from './READ.CGI';
+import BBS from './BBS';
 
 declare module 'hono' {
   interface ContextRenderer {
@@ -54,6 +54,6 @@ app.get('/', (c) => {
   )
 })
 
-app.mount('/test/read.cgi',READ.fetch)
+app.mount('/test',BBS.fetch)
 
 export default app
