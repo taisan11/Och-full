@@ -1,6 +1,7 @@
 {
   "scripts": {
     "dev": "bun run --hot test/testServer.tsx",
+    "dev:node": "pnpx jiti test/testServerNode.tsx",
     "build": "bun run ./build.ts",
     "create:test": "bun run test/setTestBBS.ts",
     "tonnel": "bunx untun tunnel"
@@ -11,6 +12,7 @@
     "unstorage": "^1.10.1"
   },
   "devDependencies": {
+    "@hono/node-server": "^1.8.2",
     "@types/bun": "latest"
   }
 }

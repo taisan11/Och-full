@@ -3,6 +3,7 @@ import { jsxRenderer, useRequestContext } from 'hono/jsx-renderer'
 import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
 import { subjectpaser } from './subjectpaser';
+import { datpaser } from './datpaser';
 
 declare module 'hono' {
   interface ContextRenderer {
@@ -81,5 +82,37 @@ app.get('/read.cgi/:BBSKEY', async (c) => {
         })}
         </>,{ title: 'READ.CGI' })
 })
+
+app.get('/read.cgi/:BBSKEY/:THID', async (c) => {
+  const BBSKEY = c.req.param('BBSKEY')
+  const THID = c.req.param('THID')
+  console.debug(BBSKEY)
+  console.debug(THID)
+  const storage = createStorage({driver: fsDriver({ base: "./data" }),});
+  const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
+  if (!THDATTXT) {
+      return c.render(
+          <>
+          <h1>READ.CGI for BBS.TSX by Och</h1>
+          <p>スレッドがありません</p>
+          </>,{ title: 'スレッドがない' })
+  }
+  const DATJSON = datpaser(THDATTXT.toString())
+  return c.render(
+      <>
+      <h1>READ.CGI</h1>
+      <h2>{DATJSON.title}</h2>
+      <dl class="thred">
+      {DATJSON.map((post) => (
+        <>
+                    <dt id={post.postid}>
+                        {post.postid} ：<font color="seagreen"><b>{post.name}</b><b>{post.mail}</b></font>：{post.date}
+                    </dt>
+                    <dd dangerouslySetInnerHTML={{ __html: post.message }}></dd></>
+            ))}
+      </dl>
+      </>,{ title: 'READ.CGI' })
+})
+
 
 export default app
