@@ -76,7 +76,7 @@ app.get('/read.cgi/:BBSKEY', async (c) => {
         const date = new Date(unixTime * 1000);
         const formattedDate = `${date.getFullYear()}/${('0' + (date.getMonth() + 1)).slice(-2)}/${('0' + date.getDate()).slice(-2)}`;
         return (
-          <a href={`./${filename}`}>{`${threadName}-${responseCount}-${formattedDate}`}</a>
+          <a href={`./${BBSKEY}/${filename}`}>{`${threadName}-${responseCount}-${formattedDate}`}</a>
         );
         })}
         </>,{ title: 'READ.CGI' })

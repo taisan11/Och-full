@@ -6,7 +6,7 @@ export function subjectpaser(subjecttxt: string) {
             [`${unixtime}`]: [threadName, responseCount]
         };
         return result;
-    } else {
-        throw new Error('Invalid format');
-    }
+     } //else {
+    //     throw new Error('Invalid format');
+    // }
 }
