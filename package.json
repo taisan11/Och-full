@@ -1,7 +1,8 @@
 {
   "scripts": {
-    "dev": "bun run --hot src/index.tsx",
+    "dev": "bun run --hot test/testServer.tsx",
     "build": "bun run ./build.ts",
+    "create:test": "bun run test/setTestBBS.ts",
     "tonnel": "bunx untun tunnel"
   },
   "dependencies": {

@@ -16,3 +16,11 @@ Och-multiはマルチランタイムで動くようにしたOchです。
 - AWS Lambda
 - Lambda@Edge
 - Other
+## 貢献方法
+### 環境構築
+```bash
+bun i
+bun run create:test
+bun run dev
+```
+を実行するとデバック用サーバーが起動します。
