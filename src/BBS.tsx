@@ -56,9 +56,10 @@ return c.render(
 
 app.get('/read.cgi/:BBSKEY', async (c) => {
     const BBSKEY = c.req.param('BBSKEY')
-    const storage = createStorage(fsDriver({ base: './data' }))
-    const SUBJECTTXT = await storage.getItem(`${BBSKEY}/SUBJECT`);
-    console.log(SUBJECTTXT)
+    console.debug(BBSKEY)
+    const storage = createStorage({driver: fsDriver({ base: "./data" }),});
+    const SUBJECTTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
+    console.debug(SUBJECTTXT)
     if (!SUBJECTTXT) {
         return c.render(
             <>

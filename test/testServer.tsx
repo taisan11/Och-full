@@ -1,5 +1,13 @@
-import { createStorage } from "unstorage";
-import fsDriver from "unstorage/drivers/fs";
+import { Hono } from 'hono'
+import { jsxRenderer, useRequestContext } from 'hono/jsx-renderer'
+import BBS from '../src/BBS';
+import { setTestBBS } from './setTestBBS';
+
+declare module 'hono' {
+  interface ContextRenderer {
+    (content: string | Promise<string>, props: { title?: string }): Response
+  }
+}
 
 const testSUBJECT = `
 1662626407.dat<>★テスト (6)
@@ -13,12 +21,54 @@ dkwdkw<>ddwdwd<>2022/09/13(火) 15:46:37.98<>wdl,wldwdo<>
 カワイイ名無しさん<><>2024/02/18(日) 03:40:18.23 ID:m1DgfUHyP<>能登半島に1兆円税金投入とか太平洋側の万里の壁並に狂ってるよな．維持にも莫大な税金が必要なわけた゛か゛原資はまだ生まれてもいない<br>労働省階級の子孫か゛支払うて゛あろう税金．日銀に株買わせて資本家階級の資産倍増させて1兆圓を超える圧倒的資産格差形成させた原資も<br>労働者階級の子孫か゛支払うであろう税金．國の借金ひとりあたり1000万圓とは要するに資本家階級の資産なわけた゛がまともな労働者階級は<br>資本家階級の奴隷なんか決して産み落とさないから人囗減少してる中．益々過疎化するそんな地方に莫大な税金投入<br>避難者2万人を1年間ナマポ化しても200億と2桁も違うわけた゛がそんな無駄な公共事業で潤うのもやはり献金た゛パ─ティ‐劵だと<br>癒着してる資本家階級と利権公務員，日銀高額ナマポの大企業は絶対倒産しないか゛小規模企業は賃上げなと゛論外、毎曰20社以上倒産<br>タタ゛メシ食える被災者か゛羨ましい現実，イノベ‐ションの源泉を根絶やしにしてGDPタ゛タ゛下がりに地球破壞するた゛けのポンコツ後進国に陥れて<br>価値生産どころか破壞て゛儲ける公務員は給料爆上げに全國航空騷音まみれにして威カ業務妨害と救いようのない腐敗国家にしたのか゛自民公明<br>(ref.) ttps://www.call4.jp/info.php?type=items&id=I0000062<br>ttps://haneda-project.jimdofree.com/ , ttps://flight-route.com/<br>ttps://n-souonhigaisosyoudan.amebaownd.com/<>
 `
 
-export async function setTestBBS(testSUBJECT:string,testDAT:string) {
-    const storage = createStorage({driver: fsDriver({ base: "./data" }),});
-    await storage.setItem("/test/SUBJECT.TXT", testSUBJECT);
-    console.log('TEST(subjectFile):',await storage.hasItem("/test/SUBJECT.TXT"))
-    await storage.setItem("/test/dat/1662626407.dat", testDAT);
-    console.log('TEST(datFile):',await storage.hasItem("/test/dat/1662626407.dat"))
-}
+// export const strage = setTestBBS(testSUBJECT,testDAT);
 
-setTestBBS(testSUBJECT,testDAT);
+const app = new Hono()
+
+app.get(
+  '*',
+  jsxRenderer(({ children,title }) => {
+    return (
+      <html lang="ja">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title}</title>
+      </head>
+      <body>
+        {children}
+      </body>
+      </html>
+    )
+  })
+)
+app.notFound((c) => {
+  return c.render(
+    <>
+      <h1>404</h1>
+    </>
+  , { title: '404' }
+  )
+})
+app.onError((e, c) => {
+  return c.render(<>
+    <h1>error</h1>
+    <p> {e.message}</p>
+  </>, { title: 'error' })
+})
+
+app.get('/', (c) => {
+  return c.render(
+    <>
+    <h2>Och</h2>
+    <p>0ではない。Oな掲示板を</p>
+    <p>デバッグ用鯖です。便利だからと言って多用しすぎないように</p>
+    <p>バグがあっても最低限のもの以外直しません</p>
+    <a href="./test/read.cgi/test">テスト板</a>
+    </>,{ title: 'Och' }
+  )
+})
+
+app.mount('/test',BBS.fetch)
+
+export default app

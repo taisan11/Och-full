@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "bun run --hot src/index.tsx",
     "build": "bun run ./build.ts",
-    "tonnel":"bunx untun tunnel"
+    "tonnel": "bunx untun tunnel"
   },
   "dependencies": {
     "defu": "^6.1.4",
