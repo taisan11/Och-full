@@ -2,11 +2,13 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot test/testServer.tsx",
-    "dev:node": "jiti test/testServerNode.tsx",
     "build": "bun run ./build.ts",
     "create:test": "bun run test/setTestBBS.ts",
-    "create:test:node": "pnpx jiti test/setTestBBS.ts",
-    "tonnel": "bunx untun tunnel"
+    "tonnel": "bunx untun tunnel",
+    "format": "bunx @biomejs/biome format --javascript-formatter-single-attribute-per-line=false ./src ./test/testServer.tsx",
+    "lint": "bunx @biomejs/biome lint --apply ./src ./test",
+    "check":"bunx @biomejs/biome check --apply ./src ./test/testServer.tsx",
+    "bci":"bunx @biomejs/biome ci --javascript-formatter-single-attribute-per-line=false ./src ./test/testServer.tsx"
   },
   "dependencies": {
     "defu": "^6.1.4",
@@ -14,6 +16,7 @@
     "unstorage": "^1.10.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.5.3",
     "@hono/node-server": "^1.8.2",
     "@types/bun": "latest"
   }
