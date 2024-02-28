@@ -4,6 +4,7 @@ import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
 import { datpaser } from "./datpaser";
 import { subjectpaser } from "./subjectpaser";
+import { KAS } from "./KAS";
 
 declare module "hono" {
   interface ContextRenderer {
@@ -93,7 +94,7 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
         },
       )}
       <p>スレ作成</p>
-      <form method="get" action="./">
+      <form method="get" {/*action="./"*/}>
         <input type="hidden" name="bbs" value="testing" />
         <label htmlFor="thTi">スレタイ:</label>
         <input type="text" id="thTi" name="thTi" />
@@ -115,7 +116,17 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
 });
 
 app.post("/read.cgi/:BBSKEY/:THID", (c) => {
-  return c.text("hjjkda");
+  const body = await c.req.formData();
+  const thTi = body.get('thTi');//タイトル(新規作成時)
+  let thID = body.get('thID');//スレッドID(かきこ時)
+  let Name = body.get('name');//名前
+  const mail = body.get('mail');//メアドor色々
+  const MESSAGE = body.get('MESSAGE');//内容
+  const bbs = body.get('bbs');//掲示板名
+  const date = new Date();//時間
+  const UnixTime = date.getTime()//UnixTime
+  const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
+  const KASS = KAS(MESSAGE,Name,mail);
 });
 
 app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
