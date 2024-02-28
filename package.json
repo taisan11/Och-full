@@ -1,9 +1,11 @@
 {
+  "type": "module",
   "scripts": {
     "dev": "bun run --hot test/testServer.tsx",
-    "dev:node": "pnpx jiti test/testServerNode.tsx",
+    "dev:node": "jiti test/testServerNode.tsx",
     "build": "bun run ./build.ts",
     "create:test": "bun run test/setTestBBS.ts",
+    "create:test:node": "pnpx jiti test/setTestBBS.ts",
     "tonnel": "bunx untun tunnel"
   },
   "dependencies": {

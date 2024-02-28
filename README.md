@@ -18,9 +18,16 @@ Och-multiはマルチランタイムで動くようにしたOchです。
 - Other
 ## 貢献方法
 ### 環境構築
+**Bun**
 ```bash
 bun i
 bun run create:test
 bun run dev
+```
+**Node**
+```bash
+pnpm i
+pnpm run create:test:node
+pnpm run dev:node
 ```
 を実行するとデバック用サーバーが起動します。

@@ -19,7 +19,6 @@ export function datpaser(dattxt: string) {
                 name: parts[0],
                 mail: parts[1],
                 date: parts[2],
-                // ID: parts[3].split(':')[1],
                 message: index === 0 ? parts[4] : parts[3]
             };
             posts.push(post);

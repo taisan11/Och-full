@@ -80,14 +80,31 @@ app.get('/read.cgi/:BBSKEY', async (c) => {
           <a href={`./${BBSKEY}/${filename}`}>{`${threadName}-${responseCount}-${formattedDate}`}</a>
         );
         })}
+        <p>スレ作成</p>
+        <form method="get" action="./">
+            <input type="hidden" name="bbs" value="testing"/>
+            <label htmlFor="thTi">スレタイ:</label>
+            <input type="text" id="thTi" name="thTi" />
+            <button type="submit">新規スレッド作成</button><br />
+            <label htmlFor="name">名前</label>
+            <input type="text" id="name" name="name" />
+            <label htmlFor="mail">メール(省略可)</label>
+            <input type="text" id="mail" name="mail" /><br />
+            <textarea rows="5" cols="70" name="MESSAGE"/>
+        </form>
+        <br />
+        <br />
+        <p>READ.CGI for BBS.TSX by Och BBS β</p>
         </>,{ title: 'READ.CGI' })
+})
+
+app.post('/read.cgi/:BBSKEY/:THID',(c) => {
+  return c.text('hjjkda')
 })
 
 app.get('/read.cgi/:BBSKEY/:THID', async (c) => {
   const BBSKEY = c.req.param('BBSKEY')
   const THID = c.req.param('THID')
-  console.debug(BBSKEY)
-  console.debug(THID)
   const storage = createStorage({driver: fsDriver({ base: "./data" }),});
   const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
   if (!THDATTXT) {
@@ -97,20 +114,34 @@ app.get('/read.cgi/:BBSKEY/:THID', async (c) => {
           <p>スレッドがありません</p>
           </>,{ title: 'スレッドがない' })
   }
-  const DATJSON = datpaser(THDATTXT.toString())
+  const EXAS = `../${BBSKEY}`
+  const DATJSON = JSON.parse(datpaser(THDATTXT.toString()))
   return c.render(
       <>
-      <h1>READ.CGI</h1>
-      <h2>{DATJSON.title}</h2>
+      <div style="margin:0px;">
+        <div style="margin-top:1em;">
+          <span style="float:left;">
+            <a href={EXAS}>■掲示板に戻る■</a>眠たいね
+          </span>
+          <span style="float:right;">
+          </span>&nbsp;
+        </div>
+      </div>
+      <hr style="background-color:#888;color:#888;border-width:0;height:1px;position:relative;top:-.4em;"></hr>
+      <h1 style="color:#CC0000;font-size:larger;font-weight:normal;margin:-.5em 0 0;">{DATJSON.title}</h1>
       <dl class="thred">
-      {DATJSON.map((post) => (
-        <>
-                    <dt id={post.postid}>
-                        {post.postid} ：<font color="seagreen"><b>{post.name}</b><b>{post.mail}</b></font>：{post.date}
-                    </dt>
-                    <dd dangerouslySetInnerHTML={{ __html: post.message }}></dd></>
-            ))}
+      {DATJSON.post.map((post, index) => (
+      <div key={index}>
+        <dt id={post.postid}>
+          {post.postid} ：<font color="seagreen"><b>{post.name}</b><b>{post.mail}</b></font>：{post.date}
+        </dt>
+        <dd dangerouslySetInnerHTML={{ __html: post.message }}></dd>
+      </div>
+    ))}
       </dl>
+      <br />
+      <br />
+      <p>READ.CGI for BBS.TSX by Och BBS β</p>
       </>,{ title: 'READ.CGI' })
 })
 
