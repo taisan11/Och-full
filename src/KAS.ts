@@ -3,6 +3,11 @@ import * as IconvCP932 from "iconv-cp932";
 export async function KAS(mes,name,mail){
     const kkk = MES(mes)
     const lll = await NES(name,mail)
+    const result = {
+      "name":lll.name,
+      "mail":lll.mail,
+      "mes":kkk
+    }
 }
 
 function MES(input: string|null): string {
