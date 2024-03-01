@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { jsxRenderer, useRequestContext } from "hono/jsx-renderer";
+import { jsxRenderer } from "hono/jsx-renderer";
 import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
 import { datpaser } from "./datpaser";
