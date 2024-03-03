@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { jsxRenderer, useRequestContext } from "hono/jsx-renderer";
 import BBS from "../src/BBS";
+import TBS from "../src/TBS";
 import { setTestBBS } from "./setTestBBS";
 
 declare module "hono" {
@@ -68,12 +69,14 @@ app.get("/", (c) => {
       <p>0ではない。Oな掲示板を</p>
       <p>デバッグ用鯖です。便利だからと言って多用しすぎないように</p>
       <p>バグがあっても最低限のもの以外直しません</p>
-      <a href="./test/read.cgi/test">テスト板</a>
+      <a href="./test/read.cgi/test">テスト板</a><br />
+      <a href="./mobtest/read.cgi/test">デザインテスト</a>
     </>,
     { title: "Och" },
   );
 });
 
 app.mount("/test", BBS.fetch);
+app.mount("/mobtest", TBS.fetch);
 
 export default app;
