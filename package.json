@@ -14,7 +14,8 @@
     "defu": "^6.1.4",
     "hono": "^4.0.5",
     "iconv-cp932": "^1.2.2",
-    "unstorage": "^1.10.1"
+    "unstorage": "^1.10.1",
+    "valibot": "^0.29.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",

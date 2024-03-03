@@ -94,7 +94,7 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
         },
       )}
       <p>スレ作成</p>
-      <form method="get" {/*action="./"*/}>
+      <form method="post">
         <input type="hidden" name="bbs" value="testing" />
         <label htmlFor="thTi">スレタイ:</label>
         <input type="text" id="thTi" name="thTi" />
@@ -115,18 +115,34 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
   );
 });
 
-app.post("/read.cgi/:BBSKEY/:THID", (c) => {
-  const body = await c.req.formData();
-  const thTi = body.get('thTi');//タイトル(新規作成時)
-  let thID = body.get('thID');//スレッドID(かきこ時)
-  let Name = body.get('name');//名前
-  const mail = body.get('mail');//メアドor色々
-  const MESSAGE = body.get('MESSAGE');//内容
-  const bbs = body.get('bbs');//掲示板名
+////////////////////////
+//   ##現在の仕様のコーナー
+//   現在はですね、IPを方法がないので放置です
+//   いつか実装したいです
+////////////////////////
+
+app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
+  const body = await c.req.parseBody()
+  const body2 = await c.req.formData();
+  console.log(body)
+  console.log(body2)
+  console.log("title:", body2.get("name"));
+  console.log("content:", body2.get("mail"));
+  console.log(c.req.raw)
+  console.log(c.req.parseBody())
+  const Name = String(body.name);//名前
+  const mail = String(body.mail);//メアドor色々
+  const MESSAGE = String(body.MESSAGE);//内容
+  const BBSKEY = c.req.param("BBSKEY");//BBSKEY
+  const THID = c.req.param("THID");//スレID
   const date = new Date();//時間
-  const UnixTime = date.getTime()//UnixTime
+  const UnixTime = String(date.getTime()).substring(0, 10)//UnixTime
   const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
-  const KASS = KAS(MESSAGE,Name,mail);
+  const storage = createStorage({driver: fsDriver({ base: "./data" }),});
+  const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
+  const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
+  await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${THDATTXT}\n${KASS.name}<>${KASS.mail}<>${KASS.time}<>${MESSAGE}`);
+  return c.redirect(`/test/read.cgi/${BBSKEY}/${THID}`);
 });
 
 app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
@@ -174,6 +190,14 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
           </>
         ))}
       </dl>
+      <form method="post">
+        <button type="submit">書き込む</button>
+        <label htmlfor="name">名前</label>
+        <input type="text" id="name" name="name" />
+        <label htmlfor="mail">メール(省略可)</label>
+        <input type="text" id="mail" name="mail" /><br />
+        <textarea rows="5" cols="70" name="MESSAGE"></textarea>
+      </form>
       <br />
       <br />
       <p>READ.CGI for BBS.TSX by Och BBS β</p>
