@@ -192,9 +192,9 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
       </dl>
       <form method="post">
         <button type="submit">書き込む</button>
-        <label htmlfor="name">名前</label>
+        <label htmlfor="name">名前:</label>
         <input type="text" id="name" name="name" />
-        <label htmlfor="mail">メール(省略可)</label>
+        <label htmlfor="mail">メール(省略可):</label>
         <input type="text" id="mail" name="mail" /><br />
         <textarea rows="5" cols="70" name="MESSAGE"></textarea>
       </form>
