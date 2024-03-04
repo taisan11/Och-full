@@ -61,6 +61,24 @@ app.get("/", async (c) => {
   );
 });
 
+app.post("/read.cgi/:BBSKEY", async (c) => {
+  const body = await c.req.parseBody()
+  const ThTi = body.thTi
+  const Name = String(body.name);//名前
+  const mail = String(body.mail);//メアドor色々
+  const MESSAGE = String(body.MESSAGE);//内容
+  const BBSKEY = c.req.param("BBSKEY");//BBSKEY
+  const date = new Date();//時間
+  const UnixTime = String(date.getTime()).substring(0, 10)//UnixTime
+  const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
+  const storage = createStorage({driver: fsDriver({ base: "./data" }),});
+  const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
+  const SUBTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
+  await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${UnixTime}.dat<>ThTi\n${SUBTXT}`)
+  await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KASS.name}<>${KASS.mail}<>${KASS.time}<>${MESSAGE}<>${ThTi}`);
+  return c.redirect(`/test/read.cgi/${BBSKEY}/${UnixTime}`);
+});
+
 app.get("/read.cgi/:BBSKEY", async (c) => {
   const BBSKEY = c.req.param("BBSKEY");
   console.debug(BBSKEY);
