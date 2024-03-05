@@ -17,10 +17,5 @@
     "iconv-cp932": "^1.2.2",
     "unstorage": "^1.10.1",
     "valibot": "^0.29.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.5.3",
-    "@hono/node-server": "^1.8.2",
-    "@types/bun": "latest"
   }
 }

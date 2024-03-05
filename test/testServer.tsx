@@ -76,7 +76,7 @@ app.get("/", (c) => {
   );
 });
 
-app.mount("/test", BBS.fetch);
-app.mount("/mobtest", TBS.fetch);
+app.route("/test", BBS);
+app.route("/mobtest", TBS);
 
 export default app;
