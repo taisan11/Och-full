@@ -3,6 +3,8 @@ import { jsxRenderer } from "hono/jsx-renderer";
 import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
 import * as KP from "@taisan11/kejibanhelper"
+import { datpaser } from "./datpaser";
+import { subjectpaser } from "./subjectpaser";
 import { KAS } from "./KAS";
 
 declare module "hono" {
@@ -93,7 +95,7 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
       { title: "掲示板がない" },
     );
   }
-  const SUBJECTJSON = KP.SubjectPaser(SUBJECTTXT);
+  const SUBJECTJSON = subjectpaser(SUBJECTTXT.toString());
   console.log(SUBJECTJSON)
   return c.render(
     <>
