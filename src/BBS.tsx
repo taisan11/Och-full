@@ -93,7 +93,8 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
       { title: "掲示板がない" },
     );
   }
-  const SUBJECTJSON = KP.SubjectPaser(SUBJECTTXT.toString());
+  const SUBJECTJSON = KP.SubjectPaser(SUBJECTTXT);
+  console.log(SUBJECTJSON)
   return c.render(
     <>
       <h1>READ.CGI</h1>

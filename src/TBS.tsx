@@ -4,6 +4,7 @@ import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
 import { KAS } from "./KAS";
 import {css,Style} from "hono/css";
+import * as KP from "@taisan11/kejibanhelper"
 
 declare module "hono" {
   interface ContextRenderer {
