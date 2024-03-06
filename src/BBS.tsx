@@ -84,7 +84,6 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
   console.debug(BBSKEY);
   const storage = createStorage({ driver: fsDriver({ base: "./data" }) });
   const SUBJECTTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
-  console.debug(SUBJECTTXT);
   if (!SUBJECTTXT) {
     return c.render(
       <>
@@ -98,9 +97,11 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
   return c.render(
     <>
       <h1>READ.CGI</h1>
-      {Object.entries(SUBJECTJSON).map(
+      {//@ts-ignore
+      Object.entries(SUBJECTJSON).map(
         ([filename, [threadName, responseCount]]) => {
           const unixTime = filename.split(".")[0];
+          //@ts-ignore
           const date = new Date(unixTime * 1000);
           const formattedDate = `${date.getFullYear()}/${(
             "0" +
@@ -141,13 +142,6 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
 
 app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
   const body = await c.req.parseBody()
-  const body2 = await c.req.formData();
-  console.log(body)
-  console.log(body2)
-  console.log("title:", body2.get("name"));
-  console.log("content:", body2.get("mail"));
-  console.log(c.req.raw)
-  console.log(c.req.parseBody())
   const Name = String(body.name);//名前
   const mail = String(body.mail);//メアドor色々
   const MESSAGE = String(body.MESSAGE);//内容
@@ -194,7 +188,8 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
         {DATJSON.title}
       </h1>
       <dl class="thred">
-        {DATJSON.post.map((post) => (
+        {//@ts-ignore
+        DATJSON.post.map((post) => (
           <>
             <dt id={post.postid}>
               {post.postid} ：
