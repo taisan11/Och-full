@@ -75,7 +75,7 @@ app.post("/read.cgi/:BBSKEY", async (c) => {
   const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
   const SUBTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
   await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${UnixTime}.dat<>${ThTi} (X)\n${SUBTXT}`)
-  await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KASS.name}<>${KASS.mail}<>${KASS.time}<>${MESSAGE}<>${ThTi}`);
+  await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}<>${ThTi}`);
   return c.redirect(`/test/read.cgi/${BBSKEY}/${UnixTime}`);
 });
 
@@ -159,7 +159,7 @@ app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
   const storage = createStorage({driver: fsDriver({ base: "./data" }),});
   const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
   const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
-  await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${THDATTXT}\n${KASS.name}<>${KASS.mail}<>${KASS.time}<>${MESSAGE}`);
+  await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${THDATTXT}\n${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}`);
   return c.redirect(`/test/read.cgi/${BBSKEY}/${THID}`);
 });
 

@@ -30,21 +30,21 @@ export async function KAS(mes:string,name:string,mail:string,time:number){
 }
 
 function MES(input: string|null): string {
-    const map: { [key: string]: string } = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;',
-      '\n': '<br/>' // Replace '\n' with '\n<br/>\n'
-    };
-    if (input == null){return '';}
-    const convertedInput = input.replace(/[&<>"'\n]/g, function(m) { return map[m]; });
-    return convertedInput.replace(/>>\d+/g, function(m) {
-      const num = m.substring(2);
-      return `<a href="#${num}">&gt;&gt;${num}</a>`;
-    });
-  }
+  const map: { [key: string]: string } = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+    '\n': '<br/>' // Replace '\n' with '<br/>'
+  };
+  if (input == null){return '';}
+  const convertedInput = input.replace(/[&<>"'\n]/g, function(m) { return map[m]; });
+  return convertedInput.replace(/>>\d+/g, function(m) {
+    const num = m.substring(2);
+    return `<a href="#${num}">&gt;&gt;${num}</a>`;
+  });
+}
 
 async function NES(input: string,mail:string) {
     if (!input) {
