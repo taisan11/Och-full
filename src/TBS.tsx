@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
+import { datpaser } from "./datpaser";
+import { subjectpaser } from "./subjectpaser";
 import { KAS } from "./KAS";
 import {css,Style} from "hono/css";
 import * as KP from "@taisan11/kejibanhelper"
@@ -67,24 +69,6 @@ app.get("/", async (c) => {
   );
 });
 
-app.post("/read.cgi/:BBSKEY", async (c) => {
-  const body = await c.req.parseBody()
-  const ThTi = body.thTi
-  const Name = String(body.name);//名前
-  const mail = String(body.mail);//メアドor色々
-  const MESSAGE = String(body.MESSAGE);//内容
-  const BBSKEY = c.req.param("BBSKEY");//BBSKEY
-  const date = new Date();//時間
-  const UnixTime = String(date.getTime()).substring(0, 10)//UnixTime
-  const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
-  const storage = createStorage({driver: fsDriver({ base: "./data" }),});
-  const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
-  const SUBTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
-  await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${KP.NewSubject(String(SUBTXT),String(ThTi),Number(UnixTime))}`)
-  await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KP.NewDat(KASS.name,KASS.mail,KASS.mes,Number(KASS.time),String(ThTi))}`);
-  return c.redirect(`/test/read.cgi/${BBSKEY}/${UnixTime}`);
-});
-
 app.get("/read.cgi/:BBSKEY", async (c) => {
   const BBSKEY = c.req.param("BBSKEY");
   console.debug(BBSKEY);
@@ -100,7 +84,7 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
       { title: "掲示板がない" },
     );
   }
-  const SUBJECTJSON = KP.SubjectPaser(SUBJECTTXT.toString());
+  const SUBJECTJSON = subjectpaser(SUBJECTTXT.toString());
   return c.render(
     <>
       <h1>READ.CGI</h1>
@@ -119,16 +103,18 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
       )}
       <p>スレ作成</p>
       <form method="post">
+        <div class={mainCss}>
         <input type="hidden" name="bbs" value="testing" />
         <label htmlFor="thTi">スレタイ:</label>
         <input type="text" id="thTi" name="thTi" />
         <button type="submit">新規スレッド作成</button>
-        <br />
+        </div>
+        <div class={mainCss}>
         <label htmlFor="name">名前</label>
         <input type="text" id="name" name="name" />
         <label htmlFor="mail">メール(省略可)</label>
         <input type="text" id="mail" name="mail" />
-        <br />
+        </div>
         <textarea rows="5" cols="70" name="MESSAGE" />
       </form>
       <br />
@@ -184,7 +170,7 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
     );
   }
   const EXAS = `../${BBSKEY}`;
-  const DATJSON = JSON.parse(KP.DatPaser(THDATTXT.toString()));
+  const DATJSON = JSON.parse(datpaser(THDATTXT.toString()));
   return c.render(
     <>
       <div style="margin:0px;">
@@ -215,11 +201,13 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
         ))}
       </dl>
       <form method="post">
+        <div class={mainCss}>
         <button type="submit">書き込む</button>
         <label htmlfor="name">名前:</label>
         <input type="text" id="name" name="name" />
         <label htmlfor="mail">メール(省略可):</label>
-        <input type="text" id="mail" name="mail" /><br />
+        <input type="text" id="mail" name="mail" />
+        </div>
         <textarea rows="5" cols="70" name="MESSAGE"></textarea>
       </form>
       <br />

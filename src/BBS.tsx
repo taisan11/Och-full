@@ -2,9 +2,9 @@ import { Hono } from "hono";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
-import * as KP from "@taisan11/kejibanhelper"
 import { datpaser } from "./datpaser";
 import { subjectpaser } from "./subjectpaser";
+import * as KP from "@taisan11/kejibanhelper/mod"
 import { KAS } from "./KAS";
 
 declare module "hono" {
@@ -95,7 +95,6 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
     );
   }
   const SUBJECTJSON = subjectpaser(SUBJECTTXT.toString());
-  console.log(SUBJECTJSON)
   return c.render(
     <>
       <h1>READ.CGI</h1>
@@ -172,7 +171,7 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
     );
   }
   const EXAS = `../${BBSKEY}`;
-  const DATJSON = JSON.parse(KP.DatPaser(THDATTXT.toString()));
+  const DATJSON = JSON.parse(datpaser(THDATTXT.toString()));
   return c.render(
     <>
       <div style="margin:0px;">
