@@ -85,7 +85,6 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
   console.debug(BBSKEY);
   const storage = createStorage({ driver: fsDriver({ base: "./data" }) });
   const SUBJECTTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
-  console.debug(SUBJECTTXT);
   if (!SUBJECTTXT) {
     return c.render(
       <>
@@ -95,7 +94,7 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
       { title: "掲示板がない" },
     );
   }
-  const SUBJECTJSON = subjectpaser(SUBJECTTXT.toString());
+  const SUBJECTJSON = KP.SubjectPaser(SUBJECTTXT.toString());
   return c.render(
     <>
       <h1>READ.CGI</h1>
@@ -142,13 +141,6 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
 
 app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
   const body = await c.req.parseBody()
-  const body2 = await c.req.formData();
-  console.log(body)
-  console.log(body2)
-  console.log("title:", body2.get("name"));
-  console.log("content:", body2.get("mail"));
-  console.log(c.req.raw)
-  console.log(c.req.parseBody())
   const Name = String(body.name);//名前
   const mail = String(body.mail);//メアドor色々
   const MESSAGE = String(body.MESSAGE);//内容
@@ -160,7 +152,7 @@ app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
   const storage = createStorage({driver: fsDriver({ base: "./data" }),});
   const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
   const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
-  await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${THDATTXT}\n${KASS.name}<>${KASS.mail}<>${KASS.time}<>${MESSAGE}`);
+  await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${KP.PostDat(String(THDATTXT),KASS.name,KASS.mail,KASS.mes,KASS.time)}`);
   return c.redirect(`/test/read.cgi/${BBSKEY}/${THID}`);
 });
 
@@ -179,7 +171,7 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
     );
   }
   const EXAS = `../${BBSKEY}`;
-  const DATJSON = JSON.parse(datpaser(THDATTXT.toString()));
+  const DATJSON = KP.DatPaser(THDATTXT.toString());
   return c.render(
     <>
       <div style="margin:0px;">
