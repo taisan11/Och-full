@@ -36,7 +36,7 @@ function MES(input: string|null): string {
       '>': '&gt;',
       '"': '&quot;',
       "'": '&#039;',
-      '\n': '\n<br/>\n' // Replace '\n' with '\n<br/>\n'
+      '\n': '<br/>' // Replace '\n' with '\n<br/>\n'
     };
     if (input == null){return '';}
     const convertedInput = input.replace(/[&<>"'\n]/g, function(m) { return map[m]; });
