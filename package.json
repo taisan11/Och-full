@@ -11,7 +11,7 @@
     "bci": "bunx @biomejs/biome ci --javascript-formatter-single-attribute-per-line=false ./src ./test/testServer.tsx"
   },
   "dependencies": {
-    "@taisan11/kejibanhelper": "npm:@jsr/taisan11__kejibanhelper@^0.2.1",
+    "@taisan11/kejibanhelper": "npm:@jsr/taisan11__kejibanhelper@^0.2.4",
     "defu": "^6.1.4",
     "hono": "^4.0.5",
     "iconv-cp932": "^1.2.2",

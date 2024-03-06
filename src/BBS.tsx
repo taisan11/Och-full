@@ -2,9 +2,9 @@ import { Hono } from "hono";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
+import * as KP from "@taisan11/kejibanhelper"
 import { datpaser } from "./datpaser";
 import { subjectpaser } from "./subjectpaser";
-import * as KP from "@taisan11/kejibanhelper/mod"
 import { KAS } from "./KAS";
 
 declare module "hono" {
@@ -75,7 +75,7 @@ app.post("/read.cgi/:BBSKEY", async (c) => {
   const storage = createStorage({driver: fsDriver({ base: "./data" }),});
   const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
   const SUBTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
-  await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${KP.NewSubject(SUBTXT,ThTi,UnixTime)}`)
+  await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${KP.NewSubject(String(SUBTXT),String(ThTi),Number(UnixTime))}`)
   await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KP.NewDat(KASS.name,KASS.mail,KASS.mes,Number(KASS.time),String(ThTi))}`);
   return c.redirect(`/test/read.cgi/${BBSKEY}/${UnixTime}`);
 });
@@ -94,7 +94,8 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
       { title: "掲示板がない" },
     );
   }
-  const SUBJECTJSON = KP.SubjectPaser(SUBJECTTXT.toString());
+  const SUBJECTJSON = subjectpaser(SUBJECTTXT.toString());
+  console.log(SUBJECTJSON)
   return c.render(
     <>
       <h1>READ.CGI</h1>
@@ -171,7 +172,7 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
     );
   }
   const EXAS = `../${BBSKEY}`;
-  const DATJSON = KP.DatPaser(THDATTXT.toString());
+  const DATJSON = JSON.parse(KP.DatPaser(THDATTXT.toString()));
   return c.render(
     <>
       <div style="margin:0px;">
