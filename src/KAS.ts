@@ -118,10 +118,10 @@ async function convertTrip(key: string, column: number, shatrip: boolean): Promi
           const signatureArray = Array.from(new Uint8Array(signature));
           trip = btoa(String.fromCharCode(...signatureArray)).substring(0, 12);
           trip = trip.replace(/\+/g, '.');
-        } else {
+        } //else {
           // 将来の拡張用
-          trip = '★とりっぷえらー';
-        }
+          // trip = '★とりっぷえらー';
+        // }
       } else if (shatrip) {
         // SHA1(新仕様)トリップ
         const keyBuffer = await crypto.subtle.digest('SHA-1', encoder.encode(key));
@@ -147,6 +147,8 @@ async function convertTrip(key: string, column: number, shatrip: boolean): Promi
       const signatureArray = Array.from(new Uint8Array(signature));
       trip = btoa(String.fromCharCode(...signatureArray)).substring(0, 12);
     }
-  
+    if (trip == '') {
+      trip = '★トリップエラー';
+    }
     return trip;
 }

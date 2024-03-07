@@ -71,17 +71,21 @@ app.post("/read.cgi/:BBSKEY", async (c) => {
   const date = new Date();//時間
   const UnixTime = String(date.getTime()).substring(0, 10)//UnixTime
   const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
+  if (!Name || Name.length > 30) { return c.redirect(`/test/read.cgi/error?e=0`) }
+  if (!MESSAGE || MESSAGE.length > 300) { return c.redirect(`/test/read.cgi/error?e=1`) }
+  if (mail.length > 70) { return c.redirect(`/test/read.cgi/error?e=2`) }
+  if (!BBSKEY) { return c.redirect(`/test/read.cgi/error?e=3`) }
+  if (!ThTi) { return c.redirect(`/test/read.cgi/error?e=5`) }
   const storage = createStorage({driver: fsDriver({ base: "./data" }),});
   const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
   const SUBTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
-  await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${UnixTime}.dat<>${ThTi} (X)\n${SUBTXT}`)
+  await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${UnixTime}.dat<>${ThTi} (1)\n${SUBTXT}`)
   await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}<>${ThTi}`);
   return c.redirect(`/test/read.cgi/${BBSKEY}/${UnixTime}`);
 });
 
 app.get("/read.cgi/:BBSKEY", async (c) => {
   const BBSKEY = c.req.param("BBSKEY");
-  console.debug(BBSKEY);
   const storage = createStorage({ driver: fsDriver({ base: "./data" }) });
   const SUBJECTTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
   if (!SUBJECTTXT) {
@@ -97,21 +101,15 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
   return c.render(
     <>
       <h1>READ.CGI</h1>
-      {//@ts-ignore
-      Object.entries(SUBJECTJSON).map(
-        ([filename, [threadName, responseCount]]) => {
-          const unixTime = filename.split(".")[0];
-          //@ts-ignore
-          const date = new Date(unixTime * 1000);
-          const formattedDate = `${date.getFullYear()}/${(
-            "0" +
-            (date.getMonth() + 1)
-          ).slice(-2)}/${("0" + date.getDate()).slice(-2)}`;
+      {
+        Object.entries(SUBJECTJSON).map(([unixtime, [threadName, responseCount]]) => {
+          const date = new Date(parseInt(unixtime) * 1000);
+          const formattedDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
           return (
-            <a href={`./${BBSKEY}/${filename}`}>{`${threadName}-${responseCount}-${formattedDate}`}</a>
+            <><a href={`./${BBSKEY}/${unixtime}`}>{`${threadName}-${responseCount}-${formattedDate}`}</a><br/></>
           );
-        },
-      )}
+        })
+      }
       <p>スレ作成</p>
       <form method="post">
         <input type="hidden" name="bbs" value="testing" />
@@ -152,6 +150,11 @@ app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
   const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
   const storage = createStorage({driver: fsDriver({ base: "./data" }),});
   const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
+  if (!Name || Name.length > 30) { return c.redirect(`/test/read.cgi/error?e=0`) }
+  if (!MESSAGE || MESSAGE.length > 300) { return c.redirect(`/test/read.cgi/error?e=1`) }
+  if (mail.length > 70) { return c.redirect(`/test/read.cgi/error?e=2`) }
+  if (!BBSKEY) { return c.redirect(`/test/read.cgi/error?e=3`) }
+  if (!THID) { return c.redirect(`/test/read.cgi/error?e=4`) }
   const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
   await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${THDATTXT}\n${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}`);
   return c.redirect(`/test/read.cgi/${BBSKEY}/${THID}`);
@@ -218,5 +221,38 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
     { title: "READ.CGI" },
   );
 });
+
+app.get("/test/read.cgi/error", async (c) => {
+  const e = c.req.query("e");
+  let em = "";
+  switch (e) {
+    case "0":
+      em = "名前が入力されていないか、30文字を超えています";
+      break;
+    case "1":
+      em = "内容が入力されていないか、300文字を超えています";
+      break;
+    case "2":
+      em = "メールが70文字を超えています";
+      break;
+    case "3":
+      em = "BBSKEYがありません";
+      break;
+    case "4":
+      em = "THIDがありません";
+      break;
+    case "5":
+      em = "スレタイが入力されていません";
+      break;
+  }
+  return c.render(
+    <>
+      <h1>ERROR</h1>
+      <p>えらーがきたぞー</p>
+      <p>{e}</p>
+    </>,
+    { title: "ERROR" },
+  );
+})
 
 export default app;
