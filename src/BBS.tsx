@@ -33,6 +33,39 @@ app.get(
   }),
 );
 
+app.get("/test/read.cgi/error", async (c) => {
+  const e = c.req.query("e");
+  let em = "";
+  switch (e) {
+    case "0":
+      em = "名前が入力されていないか、30文字を超えています";
+      break;
+    case "1":
+      em = "内容が入力されていないか、300文字を超えています";
+      break;
+    case "2":
+      em = "メールが70文字を超えています";
+      break;
+    case "3":
+      em = "BBSKEYがありません";
+      break;
+    case "4":
+      em = "THIDがありません";
+      break;
+    case "5":
+      em = "スレタイが入力されていません";
+      break;
+  }
+  return c.render(
+    <>
+      <h1>ERROR</h1>
+      <p>えらーがきたぞー</p>
+      <p>{em}</p>
+    </>,
+    { title: "ERROR" },
+  );
+})
+
 app.get("/", async (c) => {
   return c.render(
     <>
@@ -221,38 +254,5 @@ app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
     { title: "READ.CGI" },
   );
 });
-
-app.get("/test/read.cgi/error", async (c) => {
-  const e = c.req.query("e");
-  let em = "";
-  switch (e) {
-    case "0":
-      em = "名前が入力されていないか、30文字を超えています";
-      break;
-    case "1":
-      em = "内容が入力されていないか、300文字を超えています";
-      break;
-    case "2":
-      em = "メールが70文字を超えています";
-      break;
-    case "3":
-      em = "BBSKEYがありません";
-      break;
-    case "4":
-      em = "THIDがありません";
-      break;
-    case "5":
-      em = "スレタイが入力されていません";
-      break;
-  }
-  return c.render(
-    <>
-      <h1>ERROR</h1>
-      <p>えらーがきたぞー</p>
-      <p>{e}</p>
-    </>,
-    { title: "ERROR" },
-  );
-})
 
 export default app;

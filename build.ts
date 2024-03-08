@@ -10,7 +10,7 @@ async function Build(args: string[]) {
       break;
     default:
       await Bun.build({
-        entrypoints: ['./src/index.tsx'],
+        entrypoints: ['./src/BBS.tsx', './src/TBS.tsx'],
         outdir: './dist',
         target: 'bun',
         minify: true,
