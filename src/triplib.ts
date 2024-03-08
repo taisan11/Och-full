@@ -1,14 +1,29 @@
 import * as IconvCP932 from "iconv-cp932";
 import {Crypt} from "./crypt";
+import { crypt } from 'crypt3-md5';
 
 export async function trip12(key: any) {
-  key = IconvCP932.encode(key);
+  const encoder = new TextEncoder();
+  key = encoder.encode(key);
   if (key.length <= 12) {return 'errerrr'}
   key = await crypto.subtle.digest('SHA-1',key)
   key = btoa(key)
   key = key.slice(0, 12);
-  const trip = IconvCP932.decode(key);
   return key;
+}
+
+export async function name(key:any) {
+  // saltの処理
+  let salt = key.slice(1, 3);
+  salt = salt ?? "";
+  salt += "H.";
+  salt = salt.replace(/[^\.-z]/g, ".");
+  salt = salt.replace(/[:;<=>?@[\\]^_`]/g, (c) => "ABCDEFGabcdef"[":;<=>?@[\\]^_`".indexOf(c)]);
+  //ここまで
+  // Reproduce the 0x80 problem.
+  key = key.replace(/\x80[\x00-\xff]*$/, "");
+  let trip = crypt((key), (salt.slice(2))).slice(-10);
+  return trip;
 }
 
 export function trip10raw(tripkey: string): string {
@@ -20,23 +35,22 @@ export function trip10raw(tripkey: string): string {
     let salt = match[2];
 
     // CP932に変換
-    const cp932KeyBuffer = IconvCP932.encode(asciiCode);
-    const cp932Key = cp932KeyBuffer.toString();
+    // const cp932KeyBuffer = IconvCP932.encode(asciiCode);
+    // const cp932Key = cp932KeyBuffer.toString();
 
     salt = (String(salt) + '..').slice(0, 2);
 
     // 0x80問題再現
     // 0x80より後ろを切り捨てる
-    const nullIndex = cp932Key.indexOf('\x80');
-    const truncatedCp932Key = nullIndex !== -1 ? cp932Key.slice(0, nullIndex) : cp932Key;
+    // const nullIndex = cp932Key.indexOf('\x80');
+    // const truncatedCp932Key = nullIndex !== -1 ? cp932Key.slice(0, nullIndex) : cp932Key;
 
     // Crypt関数を使用してtrip生成
-    const trip = Crypt(truncatedCp932Key, salt).slice(-10);
+    // Reproduce the 0x80 problem.
+    const key = asciiCode.replace(/\x80[\x00-\xff]*$/, "");
+    const trip = Crypt(key, salt).slice(-10);
 
-    // 生成されたtripをCP932からUTF-8に変換して戻す
-    const utf8TripBuffer = IconvCP932.decode(Buffer.from(trip, 'binary'));
-
-    return utf8TripBuffer;
+    return trip;
 }
 
 
