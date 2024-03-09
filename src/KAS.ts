@@ -1,6 +1,6 @@
 import * as IconvCP932 from "iconv-cp932";
-import {Crypt} from "./crypt";
-import * as crypto from "crypto";
+// import {Crypt} from "./crypt";
+// import * as crypto from "crypto";
 
 function formatUnixTime(unixTime: number): string {
   // UNIXタイムをミリ秒に変換
@@ -72,7 +72,9 @@ async function NES(input: string,mail:string) {
     const convertedInput = input.replace(/[◆★\n]/g, function(m) { return map[m]; });
     let trip = '';
     if (length > 0) {
-    trip = `◆`+await convertTrip(match, length, true);}
+    // trip = `◆`+await convertTrip(match, length, true);
+    trip = `◆`+`現在一時的にトリップは使用できません`
+  }
     return {"name":`${convertedInput.replace(/#.*/, '')}${trip}`,"mail":mail}
 }
 
@@ -84,49 +86,49 @@ async function NES(input: string,mail:string) {
  * @param shatrip 12桁トリップON/OFF
  * @returns 変換後文字列
  */
-function convertTrip(key: string | null | undefined, column: number, shatrip: boolean): string {
-  column *= -1;
-  let trip = '';
+// function convertTrip(key: string | null | undefined, column: number, shatrip: boolean): string {
+//   column *= -1;
+//   let trip = '';
 
-  if (!key) {
-      key = '';
-  }
+//   if (!key) {
+//       key = '';
+//   }
 
-  key = Buffer.from(key, 'utf16le').toString('cp932');
+//   key = Buffer.from(key, 'utf16le').toString('cp932');
 
-  if (key.length >= 12) {
-      const mark = key[0];
+//   if (key.length >= 12) {
+//       const mark = key[0];
 
-      if (mark === '#' || mark === '$') {
-          if (key.match(/^#([0-9a-zA-Z]{16})([./0-9A-Za-z]{0,2})$/)) {
-              const key2 = Buffer.from(key.match(/^#([0-9a-zA-Z]{16})([./0-9A-Za-z]{0,2})$/)[1], 'hex');
-              const salt = (key.match(/^#([0-9a-zA-Z]{16})([./0-9A-Za-z]{0,2})$/)[2] + '..').substring(0, 2);
+//       if (mark === '#' || mark === '$') {
+//           if (key.match(/^#([0-9a-zA-Z]{16})([./0-9A-Za-z]{0,2})$/)) {
+//               const key2 = Buffer.from(key.match(/^#([0-9a-zA-Z]{16})([./0-9A-Za-z]{0,2})$/)[1], 'hex');
+//               const salt = (key.match(/^#([0-9a-zA-Z]{16})([./0-9A-Za-z]{0,2})$/)[2] + '..').substring(0, 2);
 
-              const key2Str = key2.toString('binary').replace(/\x80[\x00-\xff]*$/, '');
+//               const key2Str = key2.toString('binary').replace(/\x80[\x00-\xff]*$/, '');
 
-              trip = Crypt(key2Str, salt).substring(column);
-          } else {
-              trip = '???';
-          }
-      } else if (shatrip) {
-          const sha1hash = crypto.createHash('sha1').update(key).digest('base64');
-          trip = sha1hash.substring(0, 12).replace(/\+/g, '.');
-      }
-  }
+//               trip = Crypt(key2Str, salt).substring(column);
+//           } else {
+//               trip = '???';
+//           }
+//       } else if (shatrip) {
+//           const sha1hash = crypto.createHash('sha1').update(key).digest('base64');
+//           trip = sha1hash.substring(0, 12).replace(/\+/g, '.');
+//       }
+//   }
 
-  if (trip === '') {
-      let salt = key.substring(1, 3) || '';
-      salt += 'H.';
-      salt = salt.replace(/[^\.-z]/g, '.');
-      salt = salt.replace(/:;<=>?@[\\]^_`/g, 'ABCDEFGabcdef');
+//   if (trip === '') {
+//       let salt = key.substring(1, 3) || '';
+//       salt += 'H.';
+//       salt = salt.replace(/[^\.-z]/g, '.');
+//       salt = salt.replace(/:;<=>?@[\\]^_`/g, 'ABCDEFGabcdef');
 
-      key = key.replace(/\x80[\x00-\xff]*$/, '');
+//       key = key.replace(/\x80[\x00-\xff]*$/, '');
 
-      trip = Crypt(key, salt).substring(column);
-  }
+//       trip = Crypt(key, salt).substring(column);
+//   }
 
-  return trip;
-}
+//   return trip;
+// }
 
 // async function convertTrip(key: string, column: number, shatrip: boolean): Promise<string> {
 //     // cryptのときの桁取得
