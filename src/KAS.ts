@@ -20,7 +20,7 @@ function formatUnixTime(unixTime: number): string {
 }
 
 export async function KAS(mes:string,name:string,mail:string,time:number){
-    const kkk = MES(mes)
+    const kkk = NewMES(mes)
     const lll = await NES(name,mail)
     const ttt = formatUnixTime(time)
     return {
@@ -31,21 +31,24 @@ export async function KAS(mes:string,name:string,mail:string,time:number){
     }
 }
 
-function MES(input: string|null): string {
-  const map: { [key: string]: string } = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-    '\n': '<br/>' // Replace '\n' with '<br/>'
-  };
-  if (input == null){return '';}
-  const convertedInput = input.replace(/[&<>"'\n]/g, function(m) { return map[m]; });
-  return convertedInput.replace(/>>\d+/g, function(m) {
-    const num = m.substring(2);
-    return `<a href="#${num}">&gt;&gt;${num}</a>`;
+function NewMES(input: string | null): string {
+  if (!input) return '';
+
+  // HTML特殊文字を変換
+  const htmlEscaped = input.replace(/[&<>"']/g, function(match) {
+      return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+      }[match];
   });
+
+  // 改行をbrタグに変換
+  const newlineEscaped = htmlEscaped.replace(/\r?\n/g, '<br/>');
+  const numLinkConverted = newlineEscaped.replace(/\b(\d+)\b/g, '<a href="#$1">&gt;&gt;$1</a>');
+  return numLinkConverted;
 }
 
 async function NES(input: string,mail:string) {
