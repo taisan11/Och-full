@@ -70,25 +70,7 @@ app.get("/", async (c) => {
   return c.render(
     <>
       <h1>hello</h1>
-      <p>このサイトはBBS.TSXスクリプトを利用しています</p>
-      <p>まぁいいか</p>
-      <form method="post">
-        <input type="hidden" name="bbs" value="testing" />
-        <div style="display: flex;">
-          <label htmlFor="thTi">スレタイ:</label>
-          <input type="text" id="thTi" name="thTi" />
-          <button type="submit">新規スレッド作成</button>
-          <br />
-        </div>
-        <div style="display: flex;;">
-          <label htmlFor="name">名前</label>
-          <input type="text" id="name" name="name" />
-          <label htmlFor="mail">メール(省略可)</label>
-          <input type="text" id="mail" name="mail" />
-          <br />
-        </div>
-        <textarea rows="5" cols="70" name="MESSAGE" />
-      </form>
+      <p>このサイトは[READ.CGI for BBS.TSX by Och BBS β]スクリプトを利用しています</p>
     </>,
     { title: "Hello" },
   );
@@ -124,7 +106,7 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
   if (!SUBJECTTXT) {
     return c.render(
       <>
-        <h1>READ.CGI for BBS.TSX by Och</h1>
+        <h1>READ.CGI for BBS.TSX by Och BBS β</h1>
         <p>掲示板がありません</p>
       </>,
       { title: "掲示板がない" },

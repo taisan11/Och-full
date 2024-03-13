@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { jsxRenderer, useRequestContext } from "hono/jsx-renderer";
 import BBS from "../src/BBS";
 import TBS from "../src/TBS";
+import Serch from "../src/serch";
 import {logger} from "hono/logger";
 
 declare module "hono" {
@@ -67,5 +68,6 @@ app.get("/", (c) => {
 
 app.route("/test", BBS);
 app.route("/mobtest", TBS);
+app.route("/serch.cgi", Serch);
 
 export default app;
