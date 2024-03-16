@@ -1,27 +1,22 @@
 {
   "dependencies": {
+    "@clack/prompts": "^0.7.0",
     "c12": "^1.10.0",
     "commander": "^12.0.0",
-    "crypt3-md5": "^1.1.1",
     "hono": "^4.0.5",
     "iconv-cp932": "^1.2.2",
-    "unstorage": "^1.10.1",
-    "valibot": "^0.29.0"
+    "unstorage": "^1.10.1"
   },
   "scripts": {
     "dev": "bun run --hot test/testServer.tsx",
     "build": "bun run ./build.ts",
     "build:tsc": "tsc --jsx react-jsx --declaration --emitDeclarationOnly --declarationDir './dist' ./src/TBS.tsx ./src/BBS.tsx",
     "create:test": "bun run test/setTestBBS.ts",
-    "tonnel": "bunx untun tunnel",
-    "format": "bunx @biomejs/biome format --javascript-formatter-single-attribute-per-line=false ./src ./test/testServer.tsx",
-    "lint": "bunx @biomejs/biome lint --apply ./src ./test",
-    "check": "bunx @biomejs/biome check --apply ./src ./test/testServer.tsx",
-    "bci": "bunx @biomejs/biome ci --javascript-formatter-single-attribute-per-line=false ./src ./test/testServer.tsx"
+    "tonnel": "bunx untun tunnel"
   },
   "type": "module",
   "devDependencies": {
-    "esbuild": "^0.20.1",
+    "@types/bun": "^1.0.8",
     "typescript": "^5.4.2"
   }
 }
