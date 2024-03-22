@@ -4,7 +4,7 @@ import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
 import { datpaser } from "./datpaser";
 import { subjectpaser } from "./subjectpaser";
-import { KAS } from "./KAS";
+import { kakiko } from "./kakiko";
 import {css,Style} from "hono/css";
 
 declare module "hono" {
@@ -103,26 +103,8 @@ app.get("/", async (c) => {
 });
 
 app.post("/read.cgi/:BBSKEY", async (c) => {
-  const body = await c.req.parseBody()
-  const ThTi = body.thTi
-  const Name = String(body.name);//名前
-  const mail = String(body.mail);//メアドor色々
-  const MESSAGE = String(body.MESSAGE);//内容
-  const BBSKEY = c.req.param("BBSKEY");//BBSKEY
-  const date = new Date();//時間
-  const UnixTime = String(date.getTime()).substring(0, 10)//UnixTime
-  const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
-  if (Name.length > 30) { return c.redirect(`/test/read.cgi/error?e=0`) }
-  if (!MESSAGE || MESSAGE.length > 300) { return c.redirect(`/test/read.cgi/error?e=1`) }
-  if (mail.length > 70) { return c.redirect(`/test/read.cgi/error?e=2`) }
-  if (!BBSKEY) { return c.redirect(`/test/read.cgi/error?e=3`) }
-  if (!ThTi) { return c.redirect(`/test/read.cgi/error?e=5`) }
-  const storage = createStorage({driver: fsDriver({ base: "./data" }),});
-  const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
-  const SUBTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
-  await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${UnixTime}.dat<>${ThTi} (1)\n${SUBTXT}`)
-  await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}<>${ThTi}`);
-  return c.redirect(`/test/read.cgi/${BBSKEY}/${UnixTime}`);
+  const kextuka = await kakiko(c, "newth");
+  return c.redirect(kextuka.redirect);
 });
 
 app.get("/read.cgi/:BBSKEY", async (c) => {
@@ -182,25 +164,8 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
 ////////////////////////
 
 app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
-  const body = await c.req.parseBody()
-  const Name = String(body.name);//名前
-  const mail = String(body.mail);//メアドor色々
-  const MESSAGE = String(body.MESSAGE);//内容
-  const BBSKEY = c.req.param("BBSKEY");//BBSKEY
-  const THID = c.req.param("THID");//スレID
-  const date = new Date();//時間
-  const UnixTime = String(date.getTime()).substring(0, 10)//UnixTime
-  const IP = c.req.header('CF-Connecting-IP')//IP(cloudflare tunnel使えば行けるやろ)
-  const storage = createStorage({driver: fsDriver({ base: "./data" }),});
-  const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
-  if (Name.length > 30) { return c.redirect(`/test/read.cgi/error?e=0`) }
-  if (!MESSAGE || MESSAGE.length > 300) { return c.redirect(`/test/read.cgi/error?e=1`) }
-  if (mail.length > 70) { return c.redirect(`/test/read.cgi/error?e=2`) }
-  if (!BBSKEY) { return c.redirect(`/test/read.cgi/error?e=3`) }
-  if (!THID) { return c.redirect(`/test/read.cgi/error?e=4`) }
-  const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
-  await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${THDATTXT}\n${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}`);
-  return c.redirect(`/test/read.cgi/${BBSKEY}/${THID}`);
+  const kextuka = await kakiko(c, "kakiko");
+  return c.redirect(kextuka.redirect);
 });
 
 app.get("/read.cgi/:BBSKEY/:THID", async (c) => {
