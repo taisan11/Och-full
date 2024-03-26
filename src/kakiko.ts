@@ -8,9 +8,9 @@ import { KAS } from "./KAS";
  * @param mode 新しいスレッドを立てるか、レスを書き込むか
  * @returns {sc:'ok'|'no',redirect:string} 成功したか、リダイレクト先
  */
-export async function kakiko(c: Context,mode:'newth'|'kakiko') {
+export async function kakiko(c: Context, mode: 'newth' | 'kakiko', base: string): Promise<{ sc: 'ok' | 'no', redirect: string }> {
     const body = await c.req.parseBody()
-    const storage = createStorage({driver: fsDriver({ base: "./data" }),});
+    const storage = createStorage({ driver: fsDriver({ base: "./data" }), });
     if (mode === 'newth') {
         // 内容物の取得
         const ThTi = body.thTi
@@ -21,18 +21,18 @@ export async function kakiko(c: Context,mode:'newth'|'kakiko') {
         const date = new Date();//時間
         const UnixTime = String(date.getTime()).substring(0, 10)//UnixTime
         // 文字数制限など
-        if (Name.length > 30) { return {'sc':'no','redirect':'/test/read.cgi/error?e=0'} }
-        if (!MESSAGE || MESSAGE.length > 300) { return {'sc':'no','redirect':'/test/read.cgi/error?e=1'} }
-        if (mail.length > 70) { return {'sc':'no','redirect':'/test/read.cgi/error?e=2'} }
-        if (!BBSKEY) { return {'sc':'no','redirect':'/test/read.cgi/error?e=3'} }
-        if (!ThTi) { return {'sc':'no','redirect':'/test/read.cgi/error?e=5'} }
+        if (Name.length > 30) { return { 'sc': 'no', 'redirect': `/${base}/read.cgi/error?e=0` } }
+        if (!MESSAGE || MESSAGE.length > 300) { return { 'sc': 'no', 'redirect': `/${base}/read.cgi/error?e=1` } }
+        if (mail.length > 70) { return { 'sc': 'no', 'redirect': `/${base}/read.cgi/error?e=2` } }
+        if (!BBSKEY) { return { 'sc': 'no', 'redirect': `/${base}/read.cgi/error?e=3` } }
+        if (!ThTi) { return { 'sc': 'no', 'redirect': `/${base}/read.cgi/error?e=5` } }
         // 加工
-        const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
+        const KASS = await KAS(MESSAGE, Name, mail, Number(UnixTime));
         // 保存
         const SUBTXT = await storage.getItem(`/${BBSKEY}/SUBJECT.TXT`);
-        await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`,`${UnixTime}.dat<>${ThTi} (1)\n${SUBTXT}`)
+        await storage.setItem(`/${BBSKEY}/SUBJECT.TXT`, `${UnixTime}.dat<>${ThTi} (1)\n${SUBTXT}`)
         await storage.setItem(`/${BBSKEY}/dat/${UnixTime}.dat`, `${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}<>${ThTi}`);
-        return {'sc':'ok','redirect':`/test/read.cgi/${BBSKEY}/${UnixTime}`};
+        return { 'sc': 'ok', 'redirect': `/${base}/read.cgi/${BBSKEY}/${UnixTime}` };
     }
     if (mode === 'kakiko') {
         // 内容物の取得
@@ -47,15 +47,16 @@ export async function kakiko(c: Context,mode:'newth'|'kakiko') {
         // 変換
         const KASS = await KAS(MESSAGE,Name,mail,Number(UnixTime));
         // 制限
-        if (Name.length > 30) { return {'sc':'no','redirect':'/test/read.cgi/error?e=0'} }
-        if (!MESSAGE || MESSAGE.length > 300) { return {'sc':'no','redirect':'/test/read.cgi/error?e=1'} }
-        if (mail.length > 70) { return {'sc':'no','redirect':'/test/read.cgi/error?e=2'} }
-        if (!BBSKEY) { return {'sc':'no','redirect':'/test/read.cgi/error?e=3'} }
-        if (!THID) { return {'sc':'no','redirect':'/test/read.cgi/error?e=4'} }
+        if (Name.length > 30) { return {'sc':'no','redirect':`/${base}/read.cgi/error?e=0`} }
+        if (!MESSAGE || MESSAGE.length > 300) { return {'sc':'no','redirect':`/${base}/read.cgi/error?e=1`} }
+        if (mail.length > 70) { return {'sc':'no','redirect':`/${base}/read.cgi/error?e=2`} }
+        if (!BBSKEY) { return {'sc':'no','redirect':`/${base}/read.cgi/error?e=3`} }
+        if (!THID) { return {'sc':'no','redirect':`/${base}/read.cgi/error?e=4`} }
         // 入力
         const THDATTXT = await storage.getItem(`/${BBSKEY}/dat/${THID}.dat`);
         await storage.setItem(`/${BBSKEY}/dat/${THID}.dat`, `${THDATTXT}\n${KASS.name}<>${KASS.mail}<>${KASS.time}<>${KASS.mes}`);
-        return {'sc':'ok','redirect':`/test/read.cgi/${BBSKEY}/${THID}`};
+        return {'sc':'ok','redirect':`/${base}/read.cgi/${BBSKEY}/${THID}`};
       
     }
+    return {sc:'no',redirect:'/'}
 }

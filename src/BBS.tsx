@@ -77,7 +77,7 @@ app.get("/", async (c) => {
 });
 
 app.post("/read.cgi/:BBSKEY", async (c) => {
-  const kextuka = await kakiko(c, "newth");
+  const kextuka = await kakiko(c, "newth",'test');
   return c.redirect(kextuka.redirect);
 });
 
@@ -136,7 +136,7 @@ app.get("/read.cgi/:BBSKEY", async (c) => {
 ////////////////////////
 
 app.post("/read.cgi/:BBSKEY/:THID", async (c) => {
-  const kextuka = await kakiko(c, "kakiko");
+  const kextuka = await kakiko(c, "kakiko",'test');
   return c.redirect(kextuka.redirect);
 });
 
