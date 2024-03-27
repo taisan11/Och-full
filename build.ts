@@ -1,5 +1,5 @@
 import {build} from 'esbuild';
-import {dependencies} from './package.json';
+// import {dependencies} from './package.json';
 async function Build(args: string[]) {
   switch (args[2]) {
     case 'cloudflare':
@@ -10,17 +10,25 @@ async function Build(args: string[]) {
         minify: true,
       });
       break;
+    // default:
+    //   build({
+    //     bundle: true,
+    //     entryPoints: ['./src/BBS.tsx', './src/TBS.tsx'],
+    //     logLevel: 'info',
+    //     sourcemap: true,
+    //     format: 'esm',
+    //     outdir: './dist',
+    //     target: ['ES6'],
+    //   })
+    //   break;
     default:
-      build({
-        bundle: true,
-        entryPoints: ['./src/BBS.tsx', './src/TBS.tsx'],
-        logLevel: 'info',
-        sourcemap: true,
-        format: 'esm',
+      Bun.build({
+        minify: true,
+        entrypoints: ['./src/BBS.tsx'],
+        // sourcemap: 'external',
+        // format: 'esm',
         outdir: './dist',
-        target: ['ES6'],
       })
-      break;
 }
 }
 
